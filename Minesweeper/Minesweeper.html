@@ -162,9 +162,9 @@ h1 {
         <button class = "resetBtn"> Reset</button>
     </div>
     <script>
-        let board = [];
-let boardSize = 10;
-let totalMines = 10;
+let board = [];
+const boardSize = 10;
+const totalMines = 10;
 let minesLeft = totalMines;
 let revealedCells = 0;
 let gameStarted = false;
@@ -204,7 +204,8 @@ const createCell = (amount) => {
                 }
                 if (this.classList.contains('flag')) return; // Don't reveal if flagged
                 if (board[i][j].neighborMines === 0) {
-                    openContinuesly(i,j);
+                    openContinuesly(i, j);
+
                 }
                 this.classList.add('revealed');
                 if (this.classList.contains('mine')) {
@@ -212,16 +213,18 @@ const createCell = (amount) => {
                     ShowMines();
                     gameOver = true;
                     StopTheGame();
+                    alert("Loser!")
+
                 }
                 else {
                     if (board[i][j].neighborMines > 0) {
                         this.textContent = board[i][j].neighborMines;
-                    }else{
-                        
+                        revealedCells++;
                     }
 
                 }
                 // Call a function to determine the mine or number.
+                checkWinner();
             });
             // On context menu
             element.addEventListener('contextmenu', function (e) {
@@ -260,11 +263,13 @@ const InsertObject = () => {
     }
 }
 const insertMines = () => {
+    let totalMinesToInsert = totalMines;
     for (let i = 0; i < boardSize; i++) {
         for (let j = 0; j < boardSize; j++) {
-            if (totalMines > 0) {
+
+            if (totalMinesToInsert > 0) {
                 board[i][j].isMine = true;
-                totalMines--;
+                totalMinesToInsert--;
             } else return;
         }
     }
@@ -320,6 +325,7 @@ const openContinuesly = (i, j) => {
     const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
     if (!cell || cell.classList.contains('revealed')) return;
     cell.classList.add('revealed');
+    revealedCells++;
     if (board[i][j].neighborMines > 0) {
         cell.textContent = board[i][j].neighborMines;
         return;
@@ -349,6 +355,15 @@ const StopTheGame = () => {
         cell.setAttribute("disabled", true);
     })
 }
+const checkWinner = () => {
+    const cellsToReveal = ((boardSize * boardSize) - totalMines);
+    console.log(revealedCells, cellsToReveal)
+    
+    if (revealedCells === cellsToReveal){
+        alert("Winner");
+        StopTheGame()
+    }
+}
 const BoardInit = () => {
 
     InsertObject();
@@ -359,6 +374,7 @@ const BoardInit = () => {
 }
 
 createCell(boardSize);
+
     </script>
 </body>
 </html>
